@@ -4,12 +4,9 @@ version := "1.0"
 
 scalaVersion := "2.11.8"
 
-val playVersion = "2.5.4"
-
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-ws" % playVersion,
-  "com.typesafe.play" %% "play-json" % playVersion
+  "com.typesafe.akka" %% "akka-http-core" % "2.4.8",
+  "de.heikoseeberger" %% "akka-http-circe" % "1.7.0"
 )
-
 
 mainClass := Some("dragisak.workday.Main")
