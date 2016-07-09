@@ -9,4 +9,12 @@ libraryDependencies ++= Seq(
   "de.heikoseeberger" %% "akka-http-circe" % "1.7.0"
 )
 
+val circeVersion = "0.4.1"
+
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
+
 mainClass := Some("dragisak.workday.Main")
