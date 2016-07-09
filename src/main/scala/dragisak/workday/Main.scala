@@ -1,9 +1,7 @@
 package dragisak.workday
 
-import javax.net.ssl.SSLContext
-
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{ConnectionContext, Http}
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
@@ -28,7 +26,7 @@ object Main extends App with CirceSupport {
 
     Await.ready(f, 10.seconds)
   } finally {
-    Http().shutdownAllConnectionPools().onComplete{ _ =>
+    Http().shutdownAllConnectionPools().onComplete { _ =>
       Await.ready(system.terminate(), 10.seconds)
     }
   }
