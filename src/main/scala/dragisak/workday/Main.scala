@@ -9,13 +9,11 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import de.heikoseeberger.akkahttpcirce.CirceSupport
-import io.circe.{Json, JsonObject}
 import io.circe.syntax._
 import io.circe.generic.auto._
 
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
-import scala.util.parsing.json.JSONArray
 
 object Main extends App with CirceSupport {
 
@@ -34,15 +32,21 @@ object Main extends App with CirceSupport {
   try {
     val f = for {
       allProjects <- getGithubProjects
-      projects = allProjects.take(1)
+      projects = allProjects.take(10)
       bearer <- getBearer(
         key = twitterKey,
         secret = twitterSecret
       )
-      tweets <- Future.sequence(projects.map(p => searchTweets(bearer, p.full_name)))
-    } yield tweets
+      tweets <- Future.sequence(
+        projects.map(p =>
+          searchTweets(bearer, p.full_name)
+            .map(tw => ProjectTweets(p, tw))
+        )
+      )
+      json = tweets.asJson
+    } yield json
 
-    f.foreach(println(_))
+    f.foreach(j => println(j.spaces4))
 
     f.recover {
       case t => t.printStackTrace()
@@ -86,7 +90,7 @@ object Main extends App with CirceSupport {
         HttpRequest(uri = s"https://api.twitter.com/1.1/search/tweets.json?q=$search")
           .withHeaders(Authorization(bearer))
       )
-      searchResults <- Unmarshal(response.entity).to[JsonObject]
-    } yield searchResults("statuses").flatMap(_.asArray).getOrElse(Json.arr())
+      searchResults <- Unmarshal(response.entity).to[TwitterSearchResult]
+    } yield searchResults.statuses
   }
 }
