@@ -43,10 +43,9 @@ object Main extends App with CirceSupport {
             .map(tw => ProjectTweets(p, tw))
         )
       )
-      json = tweets.asJson
-    } yield json
+    } yield tweets
 
-    f.foreach(j => println(j.spaces4))
+    f.foreach(t => println(t.asJson.spaces4))
 
     f.recover {
       case t => t.printStackTrace()
