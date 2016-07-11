@@ -1,6 +1,6 @@
 package dragisak.workday
 
 case class ProjectTweets(
-  project: GitHubProject,
-  tweets: List[Tweet]
+  project   : GitHubProject,
+  tweets    : List[Tweet]
 )
